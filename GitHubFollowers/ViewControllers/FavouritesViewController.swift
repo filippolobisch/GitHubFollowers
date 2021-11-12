@@ -8,12 +8,6 @@
 import UIKit
 
 class FavouritesViewController: GFDataLoadingViewController {
-    class FavouritesTableViewDiffableDataSource: UITableViewDiffableDataSource<Int, Follower> {
-        override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-            true
-        }
-    }
-    
     let tableView = UITableView(frame: .zero, style: .plain)
     var dataSource: UITableViewDiffableDataSource<Int, Follower>!
     
@@ -39,13 +33,16 @@ class FavouritesViewController: GFDataLoadingViewController {
     }
     
     func getFavourites() {
-        PersistenceManager.retrieveFavourites { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let favourites):
-                self.updateUI(for: favourites)
-            case .failure(let error):
-                self.presentUIAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTitle: "OK")
+        Task.init {
+            do {
+                let favourites = try await PersistenceManager.retrieveFavourites()
+                updateUI(for: favourites)
+            } catch {
+                if let error = error as? GFError {
+                    presentUIAlert(title: "Something wrong happened", message: error.rawValue, buttonTitle: "OK")
+                } else {
+                    presentDefaultError()
+                }
             }
         }
     }
@@ -73,15 +70,16 @@ extension FavouritesViewController: UITableViewDelegate {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] contextAction, view, completion in
             guard let self = self else { return }
             guard let favourite = self.dataSource.itemIdentifier(for: indexPath) else { return }
-            PersistenceManager.update(favourite: favourite, withPersistenceAction: .remove) { [weak self] error in
-                guard let self = self else { return }
+            
+            Task.init {
+                let error = await PersistenceManager.update(favourite: favourite, withPersistenceAction: .remove)
                 guard let error = error else {
                     self.favourites.removeAll { $0.login == favourite.login }
                     self.updateUI(for: self.favourites)
                     return
                 }
                 
-                self.presentUIAlertOnMainThread(title: "Unable to Delete User.", message: error.rawValue, buttonTitle: "OK")
+                self.presentUIAlert(title: "Unable to delete User.", message: error.rawValue, buttonTitle: "OK")
             }
         }
         
@@ -104,9 +102,7 @@ extension FavouritesViewController {
         self.favourites = favourites
         
         if favourites.isEmpty {
-            DispatchQueue.main.async {
-                self.showEmptyStateView(with: "No Favourites.")
-            }
+            showEmptyStateView(with: "No Favourites.")
         } else {
             DispatchQueue.main.async {
                 repeat {
@@ -123,9 +119,6 @@ extension FavouritesViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Follower>()
         snapshot.appendSections([.zero])
         snapshot.appendItems(favourites)
-        
-        DispatchQueue.main.async {
-            self.dataSource.apply(snapshot, animatingDifferences: true)
-        }
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }

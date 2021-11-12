@@ -19,18 +19,16 @@ enum PersistenceManager {
         case remove
     }
     
-    static func retrieveFavourites(completion: @escaping (Result<[Follower], GFError>) -> Void) {
+    static func retrieveFavourites() async throws -> [Follower] {
         guard let favouritesData = defaults.object(forKey: Keys.favourites) as? Data else {
-            completion(.success([]))
-            return
+            return []
         }
         
         do {
             let decoder = JSONDecoder()
-            let favourites = try decoder.decode([Follower].self, from: favouritesData)
-            completion(.success(favourites))
+            return try decoder.decode([Follower].self, from: favouritesData)
         } catch {
-            completion(.failure(.unableToFavourite))
+            throw GFError.unableToFavourite
         }
     }
     
@@ -45,26 +43,20 @@ enum PersistenceManager {
         }
     }
     
-    static func update(favourite: Follower, withPersistenceAction actionType: PersistenceActionType, completion: @escaping (GFError?) -> Void) {
-        retrieveFavourites { result in
-            switch result {
-            case .success(var favourites):
-                switch actionType {
-                case .add:
-                    guard !favourites.contains(favourite) else {
-                        completion(.alreadyFavourited)
-                        return
-                    }
-                    
-                    favourites.append(favourite)
-                case .remove:
-                    favourites.removeAll { $0.login == favourite.login}
-                }
-                
-                completion(save(favourites: favourites))
-            case .failure(let error):
-                completion(error)
+    static func update(favourite: Follower, withPersistenceAction actionType: PersistenceActionType) async -> GFError? {
+        do {
+            var favourites = try await retrieveFavourites()
+            switch actionType {
+            case .add:
+                guard !favourites.contains(favourite) else { return GFError.alreadyFavourited }
+                favourites.append(favourite)
+            case .remove:
+                favourites.removeAll { $0.login == favourite.login }
             }
+            
+            return save(favourites: favourites)
+        } catch {
+            return error as? GFError
         }
     }
 }
