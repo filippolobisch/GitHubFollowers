@@ -93,7 +93,7 @@ extension FavouritesViewController {
     func configureDataSource() {
         dataSource = UITableViewDiffableDataSource<Int, Follower>(tableView: tableView) { tableView, indexPath, favourite in
             guard let cell = tableView.dequeueReusableCell(withIdentifier: FavouriteCell.reuseIdentifier, for: indexPath) as? FavouriteCell else {
-                fatalError("Unable to dequeue cell of type \(GFProfileItemCell.self) at \(indexPath)")
+                fatalError("Unable to dequeue cell of type \(FavouriteCell.self) at \(indexPath)")
             }
             cell.set(favourite: favourite)
             return cell
