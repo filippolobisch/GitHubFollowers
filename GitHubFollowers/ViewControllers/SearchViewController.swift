@@ -10,7 +10,7 @@ import UIKit
 class SearchViewController: UIViewController {
     let logoImageView = UIImageView()
     let usernameTextField = GFTextField()
-    let getFollowersButton = GFButton(backgroundColor: .systemGreen, title: "Get Followers")
+    let getFollowersButton = GFButton(color: .systemGreen, title: "Get Followers", systemImageName: "person.3.fill")
     
     var isUsernameEntered: Bool {
         guard let text = usernameTextField.text else { return false }

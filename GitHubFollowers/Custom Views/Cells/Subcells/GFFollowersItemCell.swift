@@ -14,7 +14,7 @@ class GFFollowersItemCell: GFItemInfoCell {
     func set(for user: User, delegate: GFFollowerItemViewControllerDelegate?) {
         itemInfoViewOne.set(itemInfoType: .followers, with: user.followers)
         itemInfoViewTwo.set(itemInfoType: .following, with: user.following)
-        actionButton.set(backgroundColor: .systemGreen, title: "Get Followers")
+        actionButton.set(color: .systemGreen, title: "Get Followers", systemImageName: "person.3.fill")
         
         self.delegate = delegate
     }
