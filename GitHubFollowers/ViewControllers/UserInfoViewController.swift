@@ -62,14 +62,17 @@ class UserInfoViewController: UIViewController {
     }
     
     func getUserInfo() {
-        NetworkManager.shared.getUserInfo(for: username) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let user):
+        Task.init {
+            do {
+                let user = try await NetworkManager.shared.getUserInfo(for: username)
                 self.user = user
-                self.applySnapshot()
-            case .failure(let error):
-                self.presentUIAlertOnMainThread(title: "Something wrong happened!", message: error.rawValue, buttonTitle: "OK")
+                applySnapshot()
+            } catch {
+                if let error = error as? GFError {
+                    presentUIAlert(title: "Something wrong happened", message: error.rawValue, buttonTitle: "OK")
+                } else {
+                    presentDefaultError()
+                }
             }
         }
     }
@@ -130,17 +133,14 @@ extension UserInfoViewController {
         snapshot.appendItems([.header], toSection: 0)
         snapshot.appendItems([.profile], toSection: 1)
         snapshot.appendItems([.followers], toSection: 2)
-        
-        DispatchQueue.main.async {
-            self.dataSource.apply(snapshot, animatingDifferences: true)
-        }
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
 
 extension UserInfoViewController: GFRepoItemViewControllerDelegate {
     func didTapGitHubProfile() {
         guard let url = URL(string: user.htmlUrl) else {
-            presentUIAlertOnMainThread(title: "Invalid URL", message: "The url attached to this user is invalid.", buttonTitle: "OK")
+            presentUIAlert(title: "Invalid URL", message: "The url attached to this user is invalid.", buttonTitle: "OK")
             return
         }
         
@@ -151,14 +151,11 @@ extension UserInfoViewController: GFRepoItemViewControllerDelegate {
 extension UserInfoViewController: GFFollowerItemViewControllerDelegate {
     func didTapGetFollowers() {
         guard user.followers != 0 else {
-            presentUIAlertOnMainThread(title: "No Followers", message: "This user has no followers.", buttonTitle: "OK")
+            presentUIAlert(title: "No Followers", message: "This user has no followers.", buttonTitle: "OK")
             return
         }
         
         delegate?.didRequestFollowers(for: user.login)
-        
-        DispatchQueue.main.async {
-            self.dismiss(animated: true, completion: nil)
-        }
+        dismiss(animated: true, completion: nil)
     }
 }
