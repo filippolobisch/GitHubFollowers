@@ -6,6 +6,7 @@ This course features the following:
 - 100% programmatic UI (i.e., no storyboards)
 - No 3rd Party Libraries
 - Memory management
+- Swift Concurrency (Async-await)
 - Caching images
 - API Calls
 - Empty States
