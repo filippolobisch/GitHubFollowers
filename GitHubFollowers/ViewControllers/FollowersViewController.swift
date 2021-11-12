@@ -66,54 +66,59 @@ class FollowersViewController: GFDataLoadingViewController {
     func getFollowers(username: String, page: Int) {
         showLoadingView()
         isLoadingMoreFollowers = true
-        NetworkManager.shared.getFollowers(for: username, page: page) { [weak self] result in
-            guard let self = self else { return }
-            self.dismissLoadingView()
-            switch result {
-            case .success(let followers):
-                self.updateUI(with: followers)
-            case .failure(let error):
-                self.presentUIAlertOnMainThread(title: "Something wrong happened", message: error.rawValue, buttonTitle: "OK")
+        Task.init {
+            do {
+                let followers = try await NetworkManager.shared.getFollowers(for: username, page: page)
+                dismissLoadingView()
+                updateUI(with: followers)
+            } catch {
+                dismissLoadingView()
+                if let error = error as? GFError {
+                    presentUIAlert(title: "Something wrong happened", message: error.rawValue, buttonTitle: "OK")
+                } else {
+                    presentDefaultError()
+                }
             }
-            
-            self.isLoadingMoreFollowers = false
         }
+        
+        isLoadingMoreFollowers = false
     }
     
     func didSelectProfileOption() {
         let userInfoViewController = UserInfoViewController(username: username, delegate: self)
         let destinationNavigationController = UINavigationController(rootViewController: userInfoViewController)
-        
-        DispatchQueue.main.async {
-            self.present(destinationNavigationController, animated: true, completion: nil)
-        }
+        present(destinationNavigationController, animated: true, completion: nil)
     }
     
     func didSelectFavouriteOption() {
         showLoadingView()
-        NetworkManager.shared.getUserInfo(for: username) { [weak self] result in
-            guard let self = self else { return }
-            self.dismissLoadingView()
-            switch result {
-            case .success(let user):
-                self.addUserToFavourites(user: user)
-            case .failure(let error):
-                self.presentUIAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTitle: "OK")
+        Task.init {
+            do {
+                let user = try await NetworkManager.shared.getUserInfo(for: username)
+                dismissLoadingView()
+                addUserToFavourites(user: user)
+            } catch {
+                dismissLoadingView()
+                if let error = error as? GFError {
+                    presentUIAlert(title: "Something wrong happened", message: error.rawValue, buttonTitle: "OK")
+                } else {
+                    presentDefaultError()
+                }
             }
         }
     }
     
     func addUserToFavourites(user: User) {
         let favourite = Follower(login: user.login, avatarUrl: user.avatarUrl)
-        PersistenceManager.update(favourite: favourite, withPersistenceAction: .add) { [weak self] error in
-            guard let self = self else { return }
-            
+        
+        Task.init {
+            let error = await PersistenceManager.update(favourite: favourite, withPersistenceAction: .add)
             guard let error = error else {
-                self.presentUIAlertOnMainThread(title: "Success", message: "You have successfully favourited this user.", buttonTitle: "OK")
+                presentUIAlert(title: "Success", message: "You have successfully favourites this user.", buttonTitle: "OK")
                 return
             }
             
-            self.presentUIAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTitle: "OK")
+            presentUIAlert(title: "Something went wrong", message: error.rawValue, buttonTitle: "OK")
         }
     }
 }
@@ -208,10 +213,7 @@ extension FollowersViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Follower>()
         snapshot.appendSections([.zero])
         snapshot.appendItems(followers)
-        
-        DispatchQueue.main.async {
-            self.dataSource.apply(snapshot, animatingDifferences: true)
-        }
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
 
