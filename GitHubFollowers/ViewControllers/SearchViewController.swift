@@ -56,7 +56,7 @@ class SearchViewController: UIViewController {
         self.view.frame.origin.y = 0
     }
     
-    @objc func presentFollowersViewController() {
+    func presentFollowersViewController() {
         guard isUsernameEntered, let username = usernameTextField.text else {
             presentUIAlert(title: "Empty Username", message: "Please enter a username. We need to know who to look for.", buttonTitle: "Ok")
             return
@@ -94,7 +94,10 @@ class SearchViewController: UIViewController {
     
     func configureGetFollowersButton() {
         view.addSubview(getFollowersButton)
-        getFollowersButton.addTarget(self, action: #selector(presentFollowersViewController), for: .touchUpInside)
+        getFollowersButton.addAction(UIAction(handler: { [weak self] action in
+            guard let self = self else { return }
+            self.presentFollowersViewController()
+        }), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
             getFollowersButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
