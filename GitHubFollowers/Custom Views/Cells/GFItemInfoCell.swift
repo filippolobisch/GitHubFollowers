@@ -24,13 +24,10 @@ class GFItemInfoCell: UITableViewCell {
     }
     
     func configureActionButton() {
-        actionButton.addAction(UIAction(handler: { [weak self] action in
-            guard let self = self else { return }
-            self.didTapActionButton()
-        }), for: .touchUpInside)
+        actionButton.addTarget(self, action: #selector(didTapActionButton), for: .touchUpInside)
     }
     
-    func didTapActionButton() {}
+    @objc func didTapActionButton() {}
     
     private func configure() {
         contentView.isUserInteractionEnabled = true
