@@ -57,11 +57,7 @@ class UserInfoViewController: UIViewController {
         view.backgroundColor = .systemBackground
         title = username
         
-        let doneButton = UIBarButtonItem(systemItem: .done, primaryAction: UIAction(handler: { [weak self] action in
-            guard let self = self else { return }
-            self.dismiss(animated: true, completion: nil)
-        }))
-        
+        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(actionButton))
         navigationItem.rightBarButtonItem = doneButton
     }
     
@@ -79,6 +75,10 @@ class UserInfoViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    @objc private func actionButton() {
+        dismiss(animated: true, completion: nil)
     }
 }
 
