@@ -58,7 +58,12 @@ class FollowersViewController: GFDataLoadingViewController {
             self.didSelectFavouriteOption()
         }
         
-        let menu = UIMenu(title: "", image: nil, options: .displayInline, children: [addAction, profileAction])
+        let qrCodeAction = UIAction(title: "View QRCode", image: SFSymbols.qrCode) { [weak self] action in
+            guard let self = self else { return }
+            self.didSelectViewQRCodeOption()
+        }
+        
+        let menu = UIMenu(title: "", image: nil, options: .displayInline, children: [addAction, profileAction, qrCodeAction])
         let barButton = UIBarButtonItem(title: nil, image: SFSymbols.ellipsisCircleFill, menu: menu)
         navigationItem.rightBarButtonItem = barButton
     }
@@ -106,6 +111,22 @@ class FollowersViewController: GFDataLoadingViewController {
                 }
             }
         }
+    }
+    
+    func didSelectViewQRCodeOption() {
+        guard let qrImage = URL(string: "https://www.github.com/\(username)")?.qrImage else {
+            presentUIAlertOnMainThread(title: "Something went wrong", message: "Could not create QRImage for this user.", buttonTitle: "OK")
+            return
+        }
+        
+        let alertTitle = "\(username)'s QR Code"
+        let alertController = UIAlertController.createAlertControllerWithImage(qrImage, title: alertTitle)
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    private func convertingTitle(withTotalNewlines totalNewlines: Int) -> String {
+        let newlinePrefixes = [String](repeating: "\n", count: totalNewlines).joined()
+        return "\(newlinePrefixes) \(username)'s QR Code"
     }
     
     func addUserToFavourites(user: User) {

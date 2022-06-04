@@ -17,6 +17,8 @@ enum SFSymbols {
     static let personCircleFill = UIImage(systemName: "person.circle.fill")
     static let ellipsisCircleFill = UIImage(systemName: "ellipsis.circle.fill")
     static let personFillBadgePlus = UIImage(systemName: "person.fill.badge.plus")
+    
+    static let qrCode = UIImage(systemName: "qrcode")
 }
 
 enum Images {
