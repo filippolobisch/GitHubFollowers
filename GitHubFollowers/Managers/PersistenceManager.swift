@@ -43,10 +43,10 @@ enum PersistenceManager {
         }
     }
     
-    static func update(favourite: Follower, withPersistenceAction actionType: PersistenceActionType) async -> GFError? {
+    static func update(favourite: Follower, withPersistenceAction persistenceAction: PersistenceActionType) async -> GFError? {
         do {
             var favourites = try await retrieveFavourites()
-            switch actionType {
+            switch persistenceAction {
             case .add:
                 guard !favourites.contains(favourite) else { return GFError.alreadyFavourited }
                 favourites.append(favourite)
