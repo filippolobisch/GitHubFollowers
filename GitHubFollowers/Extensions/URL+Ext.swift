@@ -8,7 +8,6 @@
 import UIKit
 
 extension URL {
-    
     var qrImage: UIImage? {
         let data = absoluteString.data(using: String.Encoding.ascii)
         

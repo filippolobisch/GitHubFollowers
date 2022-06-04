@@ -9,16 +9,19 @@ import UIKit
 
 extension UIAlertController {
     /// Method to create an UIAlertController with an image. Inpired by Christian Selig's implementation in Amplosion.
-    static func createAlertControllerWithImage(_ image: UIImage, title: String, message: String? = nil) -> UIAlertController {
+    static func createAlertControllerWithImage(_ image: UIImage, title: String? = nil, message: String? = nil) -> UIAlertController {
         let titleFont = UIFont.preferredFont(forTextStyle: .headline)
         let qrCodeImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         qrCodeImageView.image = image
         let measuringAttributedStringHeight = NSAttributedString(string: "Penguin", attributes: [.font: titleFont]).boundingRect(with: .zero, options: [.usesFontLeading, .usesLineFragmentOrigin], context: nil).height
         let desiredOffset = 15.0 + qrCodeImageView.bounds.height
         let totalNewlinePrefixes = Int((desiredOffset / measuringAttributedStringHeight).rounded())
-        
         let newlinePrefixes = [String](repeating: "\n", count: totalNewlinePrefixes).joined()
-        let alertTitle = "\(newlinePrefixes) \(title)"
+        
+        var alertTitle = "\(newlinePrefixes)"
+        if let title = title {
+            alertTitle += "\(title)"
+        }
         
         let alertController = UIAlertController(title: alertTitle, message: nil, preferredStyle: .alert)
         
