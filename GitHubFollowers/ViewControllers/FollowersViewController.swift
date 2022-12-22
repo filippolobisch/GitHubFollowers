@@ -49,12 +49,12 @@ class FollowersViewController: GFDataLoadingViewController {
     
     func configureNavigationBar() {
         let profileAction = UIAction(title: "View Profile", image: SFSymbols.personCircleFill) { [weak self] action in
-            guard let self = self else { return }
+            guard let self else { return }
             self.didSelectProfileOption()
         }
         
         let addAction = UIAction(title: "Favourite User", image: SFSymbols.personFillBadgePlus) { [weak self] action in
-            guard let self = self else { return }
+            guard let self else { return }
             self.didSelectFavouriteOption()
         }
         
@@ -113,7 +113,7 @@ class FollowersViewController: GFDataLoadingViewController {
         
         Task {
             let error = await PersistenceManager.update(favourite: favourite, withPersistenceAction: .add)
-            guard let error = error else {
+            guard let error else {
                 presentUIAlert(title: "Success", message: "You have successfully favourites this user.", buttonTitle: "OK")
                 return
             }

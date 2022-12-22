@@ -68,12 +68,12 @@ extension FavouritesViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] contextAction, view, completion in
-            guard let self = self else { return }
+            guard let self else { return }
             guard let favourite = self.dataSource.itemIdentifier(for: indexPath) else { return }
             
             Task {
                 let error = await PersistenceManager.update(favourite: favourite, withPersistenceAction: .remove)
-                guard let error = error else {
+                guard let error else {
                     self.favourites.removeAll { $0.login == favourite.login }
                     self.updateUI(for: self.favourites)
                     return
