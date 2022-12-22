@@ -101,7 +101,7 @@ extension UserInfoViewController: UITableViewDelegate {
 extension UserInfoViewController {
     func configureDataSource() {
         dataSource = UserInfoTableViewDiffableDataSource(tableView: tableView) { [weak self] tableView, indexPath, cellType in
-            guard let self = self else { fatalError("Unable to unwrap self.") }
+            guard let self else { fatalError("Unable to unwrap self.") }
             
             switch cellType {
             case .header:
