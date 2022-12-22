@@ -62,7 +62,7 @@ class UserInfoViewController: UIViewController {
     }
     
     func getUserInfo() {
-        Task.init {
+        Task {
             do {
                 let user = try await NetworkManager.shared.getUserInfo(for: username)
                 self.user = user

@@ -33,7 +33,7 @@ class FavouritesViewController: GFDataLoadingViewController {
     }
     
     func getFavourites() {
-        Task.init {
+        Task {
             do {
                 let favourites = try await PersistenceManager.retrieveFavourites()
                 updateUI(for: favourites)
@@ -71,7 +71,7 @@ extension FavouritesViewController: UITableViewDelegate {
             guard let self = self else { return }
             guard let favourite = self.dataSource.itemIdentifier(for: indexPath) else { return }
             
-            Task.init {
+            Task {
                 let error = await PersistenceManager.update(favourite: favourite, withPersistenceAction: .remove)
                 guard let error = error else {
                     self.favourites.removeAll { $0.login == favourite.login }

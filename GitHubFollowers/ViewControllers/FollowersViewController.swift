@@ -66,7 +66,7 @@ class FollowersViewController: GFDataLoadingViewController {
     func getFollowers(username: String, page: Int) {
         showLoadingView()
         isLoadingMoreFollowers = true
-        Task.init {
+        Task {
             do {
                 let followers = try await NetworkManager.shared.getFollowers(for: username, page: page)
                 dismissLoadingView()
@@ -92,7 +92,7 @@ class FollowersViewController: GFDataLoadingViewController {
     
     func didSelectFavouriteOption() {
         showLoadingView()
-        Task.init {
+        Task {
             do {
                 let user = try await NetworkManager.shared.getUserInfo(for: username)
                 dismissLoadingView()
@@ -111,7 +111,7 @@ class FollowersViewController: GFDataLoadingViewController {
     func addUserToFavourites(user: User) {
         let favourite = Follower(login: user.login, avatarUrl: user.avatarUrl)
         
-        Task.init {
+        Task {
             let error = await PersistenceManager.update(favourite: favourite, withPersistenceAction: .add)
             guard let error = error else {
                 presentUIAlert(title: "Success", message: "You have successfully favourites this user.", buttonTitle: "OK")
