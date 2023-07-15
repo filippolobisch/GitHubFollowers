@@ -14,7 +14,7 @@ struct FollowersListView: View {
     @State private var searchIsActive = false
     
     @State private var followers: [Follower] = []
-    @State var page = 1
+    @State private var page = 1
     @State private var hasMoreFollowers = true
     
     private var filteredFollowers: [Follower] {

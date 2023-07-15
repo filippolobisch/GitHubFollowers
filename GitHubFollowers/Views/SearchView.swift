@@ -12,6 +12,8 @@ struct SearchView: View {
     @State private var showFollowers = false
     @FocusState private var isUsernameTextFieldFocused: Bool
     
+    @State private var showsEmptyUsernameAlert = false
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -33,6 +35,11 @@ struct SearchView: View {
                     .padding(.top, 48)
                 
                 Button(action: {
+                    guard !username.trimmingCharacters(in: .whitespaces).isEmpty else {
+                        showsEmptyUsernameAlert = true
+                        return
+                    }
+                    
                     showFollowers = true
                     isUsernameTextFieldFocused = false
                 }, label: {
@@ -51,6 +58,12 @@ struct SearchView: View {
             .navigationDestination(isPresented: $showFollowers) {
                 FollowersListView(username: username)
             }
+            .alert("Empty Username", isPresented: $showsEmptyUsernameAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Please enter a username. We need to know who to look for.")
+            }
+
         }
     }
 }
