@@ -11,7 +11,6 @@ struct FollowersListView: View {
     let username: String
     
     @State private var searchText = ""
-    @State private var searchIsActive = false
     
     @State private var followers: [Follower] = []
     @State private var page = 1
@@ -48,7 +47,7 @@ struct FollowersListView: View {
         .task {
             await getFollowers()
         }
-        .searchable(text: $searchText, isPresented: $searchIsActive)
+        .searchable(text: $searchText, prompt: Text("Search for a username"))
         .navigationTitle(username)
     }
     
@@ -77,6 +76,8 @@ struct FollowersListView: View {
 }
 
 #Preview {
-    FollowersListView(username: "filippolobisch")
-        .preferredColorScheme(.dark)
+    NavigationStack {
+        FollowersListView(username: "filippolobisch")
+            .preferredColorScheme(.dark)
+    }
 }

@@ -24,7 +24,7 @@ struct SearchView: View {
                         isUsernameTextFieldFocused = false
                     }
                 
-                TextField("Username", text: $username)
+                TextField("Enter a username", text: $username)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .keyboardType(.webSearch)
