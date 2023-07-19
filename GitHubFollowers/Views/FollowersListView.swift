@@ -78,6 +78,5 @@ struct FollowersListView: View {
 #Preview {
     NavigationStack {
         FollowersListView(username: "filippolobisch")
-            .preferredColorScheme(.dark)
     }
 }

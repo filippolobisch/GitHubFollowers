@@ -11,9 +11,9 @@ struct AppTabView: View {
     var body: some View {
         TabView {
             SearchView()
-                .tabItem {
-                    Label("Search", systemImage: "magnifyingglass")
-                }
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+            FavouritesListView()
+                .tabItem { Label("Favourites", systemImage: "heart.circle.fill") }
         }
     }
 }
