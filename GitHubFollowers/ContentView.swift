@@ -1,15 +1,14 @@
-//
-//  ContentView.swift
-//  GitHubFollowers
-//
-//  Created by Filippo Lobisch on 13.07.23.
-//
-
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     var body: some View {
-        AppTabView()
+        TabView {
+            SearchView()
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+            FavouritesListView()
+                .tabItem { Label("Favourites", systemImage: "heart.circle.fill") }
+        }
     }
 }
 
