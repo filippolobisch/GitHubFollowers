@@ -1,10 +1,3 @@
-//
-//  User.swift
-//  GitHubFollowers
-//
-//  Created by Filippo Lobisch on 07/10/2021.
-//
-
 import Foundation
 
 struct User: Codable, Hashable {
@@ -19,4 +12,8 @@ struct User: Codable, Hashable {
     let followers: Int
     let following: Int
     let createdAt: Date
+    
+    static var placeholder: User {
+        User(login: "placeholder", avatarUrl: "", name: "Placeholder User", location: nil, bio: "This is a placeholder user bio.", publicRepos: 0, publicGists: 0, htmlUrl: "", followers: 0, following: 0, createdAt: Date())
+    }
 }
