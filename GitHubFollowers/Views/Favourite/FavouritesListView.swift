@@ -6,7 +6,6 @@ struct FavouritesListView: View {
     @Environment(\.modelContext) private var modelContext
     
     @State private var searchText = ""
-    @State private var isDeleteAlertPresented = false
     
     var filteredFavourites: [Favourite] {
         guard !searchText.isEmpty else { return favourites }
@@ -32,14 +31,9 @@ struct FavouritesListView: View {
             }
             .navigationTitle("Favourites")
             .navigationDestination(for: Favourite.self) { favourite in
-                UserView(username: favourite.username)
+                FollowersListView(username: favourite.username)
             }
             .searchable(text: $searchText)
-            .alert("Unable to unfavourite a User.", isPresented: $isDeleteAlertPresented) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text("An error occurred when removing a favourited user.")
-            }
             .overlay {
                 if filteredFavourites.isEmpty {
                     ContentUnavailableView(label: {
@@ -53,13 +47,8 @@ struct FavouritesListView: View {
     }
     
     private func removeFromFavourites(for favourite: Favourite) {
-        do {
-            try withAnimation {
-                modelContext.delete(favourite)
-                try modelContext.save()
-            }
-        } catch {
-            isDeleteAlertPresented = true
+        withAnimation {
+            modelContext.delete(favourite)
         }
     }
 }

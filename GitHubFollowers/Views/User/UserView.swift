@@ -3,6 +3,7 @@ import SwiftData
 
 struct UserView: View {
     var username: String
+    @Binding var previousUsername: String
     @State var user: User = .placeholder
     @State private var isShowingUserFollowers = false
     @State private var isShowingUserProfile = false
@@ -42,8 +43,12 @@ struct UserView: View {
         .task {
             await getUserInfo()
         }
-        .navigationDestination(isPresented: $isShowingUserFollowers) {
-            FollowersListView(username: username)
+        .onChange(of: isShowingUserFollowers) { _, newValue in
+            if previousUsername != username {
+                previousUsername = username
+            }
+            
+            dismiss()
         }
         .fullScreenCover(isPresented: $isShowingUserProfile) {
             SafariView(url: URL(string: user.htmlUrl)!)
@@ -61,5 +66,5 @@ struct UserView: View {
 }
 
 #Preview {
-    UserView(username: "filippolobisch")
+    UserView(username: "filippolobisch", previousUsername: .constant("DiogoJGoncalves"))
 }

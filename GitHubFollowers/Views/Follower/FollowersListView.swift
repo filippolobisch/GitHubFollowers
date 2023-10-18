@@ -17,9 +17,7 @@ struct FollowersListView: View {
     @Query private var favourites: [Favourite]
     @Environment(\.modelContext) private var modelContext
     
-    var isFavourite: Bool {
-        favourites.contains(where: { $0.username == username })
-    }
+    @State private var isNotAbleToRetrieveUserInfoPresented = false
     
     private let columns: [GridItem] = [
         .init(.flexible()),
@@ -35,6 +33,10 @@ struct FollowersListView: View {
                     FollowerView(follower: follower)
                         .onTapGesture {
                             viewModel.selectedFollower = follower.login
+                        }
+                        .contextMenu {
+                            favouriteButton(for: follower.login)
+                            viewProfileButton(for: follower.login)
                         }
                 }
             }
@@ -52,18 +54,19 @@ struct FollowersListView: View {
         }
         .searchable(text: $searchText, prompt: Text("Search for a username"))
         .navigationTitle(username)
+        .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $viewModel.isDetailViewPresented) {
             NavigationStack {
-                UserView(username: viewModel.selectedFollower)
+                UserView(username: viewModel.selectedFollower, previousUsername: $username)
             }
         }
+        .onChange(of: username) { _, _ in
+            resetUI()
+        }
         .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button {
-                    viewModel.selectedFollower = username
-                } label: {
-                    Label("View Profile", systemImage: "person.circle.fill")
-                }
+            ToolbarTitleMenu {
+                favouriteButton(for: username)
+                viewProfileButton(for: username)
             }
         }
         .overlay {
@@ -81,11 +84,84 @@ struct FollowersListView: View {
                 })
             }
         }
+        .alert("Unable to retrieve user", isPresented: $isNotAbleToRetrieveUserInfoPresented) {
+            Button("OK", role: .cancel) {
+                isNotAbleToRetrieveUserInfoPresented = false
+            }
+        } message: {
+            Text("The user you are trying to favourite/unfavourite could not be retrieved.")
+        }
+    }
+    
+    private func resetUI() {
+        viewModel = FollowerListViewModel()
+        Task {
+            await viewModel.getFollowers(username: username)
+        }
+    }
+    
+    @ViewBuilder
+    private func favouriteButton(for username: String) -> some View {
+        Button {
+            Task {
+                if isFavourite(username: username) {
+                    await removeFromFavourites(user: username)
+                } else {
+                    await favourite(user: username)
+                }
+            }
+        } label: {
+            if isFavourite(username: username) {
+                Label("Remove from favourites", systemImage: "heart.slash.fill")
+            } else {
+                Label("Add to favourites", systemImage: "heart")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func viewProfileButton(for username: String) -> some View {
+        Button {
+            viewModel.selectedFollower = username
+        } label: {
+            Label("View Profile", systemImage: "person.circle.fill")
+        }
+    }
+    
+    private func isFavourite(username: String) -> Bool {
+        favourites.contains(where: { $0.username.lowercased() == username.lowercased() })
+    }
+    
+    private func getUserAsFavourite(for username: String) async -> Favourite? {
+        guard let user =  try? await NetworkManager.shared.getUserInfo(for: username) else { return nil }
+        return Favourite(username: user.login, avatarURL: user.avatarUrl)
+    }
+    
+    private func favourite(user username: String) async {
+        guard let favourite = await getUserAsFavourite(for: username) else {
+            isNotAbleToRetrieveUserInfoPresented = true
+            return
+        }
+        
+        withAnimation {
+            modelContext.insert(favourite)
+        }
+    }
+    
+    private func removeFromFavourites(user username: String) async {
+        guard let favourite = favourites.first(where: { $0.username.lowercased() == username.lowercased() }) else {
+            isNotAbleToRetrieveUserInfoPresented = true
+            return
+        }
+        
+        withAnimation {
+            modelContext.delete(favourite)
+        }
     }
 }
 
 #Preview {
     NavigationStack {
-        FollowersListView(username: "iDylanK")
+        FollowersListView(username: "filippolobisch")
     }
 }

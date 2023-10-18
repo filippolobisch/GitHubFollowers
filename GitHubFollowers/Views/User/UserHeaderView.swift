@@ -58,5 +58,5 @@ struct UserHeaderView: View {
 
 
 #Preview {
-    UserView(username: "filippolobisch")
+    UserView(username: "filippolobisch", previousUsername: .constant("DiogoJGoncalves"))
 }
