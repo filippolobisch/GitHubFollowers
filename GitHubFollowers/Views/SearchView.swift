@@ -1,10 +1,3 @@
-//
-//  SearchView.swift
-//  GitHubFollowers
-//
-//  Created by Filippo Lobisch on 13.07.23.
-//
-
 import SwiftUI
 
 struct SearchView: View {
@@ -43,10 +36,10 @@ struct SearchView: View {
                     showFollowers = true
                     isUsernameTextFieldFocused = false
                 }, label: {
-                    GFButtonView(title: "Get Followers", imageName: "person.3.fill")
+                    Label("Get Followers", systemImage: "person.3.fill")
                         .font(.headline)
                         .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: .infinity, minHeight: 50, idealHeight: 50)
                 })
                 .tint(.green)
                 .buttonStyle(.borderedProminent)
