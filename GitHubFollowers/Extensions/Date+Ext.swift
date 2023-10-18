@@ -1,10 +1,3 @@
-//
-//  Date+Ext.swift
-//  GitHubFollowers
-//
-//  Created by Filippo Lobisch on 28/10/2021.
-//
-
 import Foundation
 
 extension Date {

@@ -1,10 +1,3 @@
-//
-//  NetworkManager.swift
-//  GitHubFollowers
-//
-//  Created by Filippo Lobisch on 15/10/2021.
-//
-
 import UIKit
 
 class NetworkManager {

@@ -1,28 +1,21 @@
-//
-//  Constants.swift
-//  GitHubFollowers
-//
-//  Created by Filippo Lobisch on 20/10/2021.
-//
-
 import UIKit
 
 enum SFSymbols {
-    static let location = UIImage(systemName: "mappin.and.ellipse")
-    static let repos = UIImage(systemName: "folder")
-    static let gists = UIImage(systemName: "text.alignleft")
-    static let followers = UIImage(systemName: "heart")
-    static let following = UIImage(systemName: "person.2")
+    static let location = "mappin.and.ellipse"
+    static let repos = "folder"
+    static let gists = "text.alignleft"
+    static let followers = "heart"
+    static let following = "person.2"
     
-    static let personCircleFill = UIImage(systemName: "person.circle.fill")
-    static let ellipsisCircleFill = UIImage(systemName: "ellipsis.circle.fill")
-    static let personFillBadgePlus = UIImage(systemName: "person.fill.badge.plus")
+    static let personCircleFill = "person.circle.fill"
+    static let ellipsisCircleFill = "ellipsis.circle.fill"
+    static let personFillBadgePlus = "person.fill.badge.plus"
 }
 
 enum Images {
-    static let ghLogo = UIImage(named: "gh-logo")
-    static let emptyStateImage = UIImage(named: "empty-state-logo")
-    static let placeholder = UIImage(named: "avatar-placeholder")
+    static let ghLogo = "gh-logo"
+    static let emptyStateImage = "empty-state-logo"
+    static let placeholder = "avatar-placeholder"
 }
 
 enum ScreenSize {
