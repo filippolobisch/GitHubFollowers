@@ -1,10 +1,3 @@
-//
-//  GFItemInfoView.swift
-//  GitHubFollowers
-//
-//  Created by Filippo Lobisch on 15.10.23.
-//
-
 import SwiftUI
 
 struct GFItemInfoView: View {

@@ -56,7 +56,6 @@ struct UserHeaderView: View {
     }
 }
 
-
 #Preview {
     UserView(username: "filippolobisch", previousUsername: .constant("DiogoJGoncalves"))
 }

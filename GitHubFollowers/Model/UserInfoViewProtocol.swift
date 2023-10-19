@@ -1,10 +1,3 @@
-//
-//  UserInfoViewProtocol.swift
-//  GitHubFollowers
-//
-//  Created by Filippo Lobisch on 18.10.23.
-//
-
 import Foundation
 import SwiftUI
 

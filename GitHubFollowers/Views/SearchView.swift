@@ -3,9 +3,8 @@ import SwiftUI
 struct SearchView: View {
     @State private var username = ""
     @State private var showFollowers = false
-    @FocusState private var isUsernameTextFieldFocused: Bool
-    
     @State private var showsEmptyUsernameAlert = false
+    @FocusState private var isUsernameTextFieldFocused: Bool
     
     var body: some View {
         NavigationStack {
@@ -52,7 +51,9 @@ struct SearchView: View {
                 FollowersListView(username: username)
             }
             .alert("Empty Username", isPresented: $showsEmptyUsernameAlert) {
-                Button("OK", role: .cancel) { }
+                Button("OK", role: .cancel) { 
+                    showsEmptyUsernameAlert = false
+                }
             } message: {
                 Text("Please enter a username. We need to know who to look for.")
             }
